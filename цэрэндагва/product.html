@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пүүз | Fashion Shop</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+}
+
+/* ===== Promo bar ===== */
+.promo-bar{
+    background:#f0f0f0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    padding:12px 20px;
+    font-size:14px;
+    color:#0b2c68;
+    position:relative;
+}
+
+.promo-bar .arrow{
+    position:absolute;
+    cursor:pointer;
+    font-size:18px;
+    color:#0b2c68;
+    user-select:none;
+}
+
+.promo-bar .arrow.left{ left:20px; }
+.promo-bar .arrow.right{ right:20px; }
+
+.promo-bar a{
+    color:#0b2c68;
+    font-weight:bold;
+    text-decoration:underline;
+}
+
+/* ===== Utility row ===== */
+.utility-row{
+    display:flex;
+    justify-content:flex-end;
+    gap:28px;
+    padding:14px 60px;
+    font-size:14px;
+    border-bottom:1px solid #eee;
+    background:white;
+}
+
+.utility-row a{
+    color:#0b2c68;
+    text-decoration:none;
+}
+
+.utility-row a:hover{
+    text-decoration:underline;
+}
+
+/* ===== Main nav ===== */
+.main-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 60px;
+    background:white;
+    border-bottom:1px solid #eee;
+}
+
+.main-nav .logo{
+    font-size:26px;
+    font-weight:bold;
+    color:#0b2c68;
+    text-decoration:none;
+}
+
+.main-nav .nav-links{
+    display:flex;
+    gap:36px;
+    list-style:none;
+}
+
+.main-nav .nav-links a{
+    color:#0b2c68;
+    text-decoration:none;
+    font-size:17px;
+}
+
+.main-nav .nav-links a:hover{
+    text-decoration:underline;
+}
+
+.main-nav .nav-icons{
+    display:flex;
+    align-items:center;
+    gap:22px;
+}
+
+.main-nav .nav-icons span{
+    font-size:20px;
+    color:#0b2c68;
+    cursor:pointer;
+    position:relative;
+}
+
+.cart-count{
+    position:absolute;
+    top:-8px;
+    right:-10px;
+    background:#0b2c68;
+    color:white;
+    font-size:11px;
+    border-radius:50%;
+    width:18px;
+    height:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* ===== Product page ===== */
+.breadcrumb{
+    padding:24px 60px 0;
+    font-size:14px;
+    color:#0b2c68;
+}
+
+.breadcrumb a{
+    color:#0b2c68;
+    text-decoration:none;
+}
+
+.breadcrumb a:hover{
+    text-decoration:underline;
+}
+
+.product-page{
+    display:grid;
+    grid-template-columns:1.2fr 1fr;
+    gap:50px;
+    padding:24px 60px 80px;
+    align-items:start;
+}
+
+/* -- Gallery -- */
+.gallery-main{
+    background:#f0f0f0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:16px;
+}
+
+.gallery-main img{
+    width:100%;
+    height:520px;
+    object-fit:cover;
+    display:block;
+}
+
+.gallery-thumbs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.gallery-thumbs img{
+    width:100%;
+    height:280px;
+    object-fit:cover;
+    border-radius:10px;
+    cursor:pointer;
+    background:#f0f0f0;
+}
+
+/* -- Details -- */
+.product-details .eyebrow{
+    font-size:14px;
+    color:#666;
+    margin-bottom:14px;
+}
+
+.product-details .eyebrow a{
+    color:#666;
+    text-decoration:none;
+}
+
+.product-details h1{
+    color:#0b2c68;
+    font-size:34px;
+    margin-bottom:10px;
+}
+
+.product-details .tagline{
+    color:#444;
+    font-size:16px;
+    margin-bottom:14px;
+}
+
+.rating{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#0b2c68;
+    margin-bottom:20px;
+    font-size:15px;
+}
+
+.rating .stars{
+    color:#0b2c68;
+    letter-spacing:2px;
+}
+
+.product-details .price{
+    color:red;
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:26px;
+}
+
+.section-label{
+    font-weight:bold;
+    color:#0b2c68;
+    margin-bottom:12px;
+    font-size:16px;
+}
+
+.section-label span{
+    font-weight:normal;
+    color:#444;
+}
+
+.color-swatches{
+    display:flex;
+    gap:12px;
+    margin-bottom:26px;
+}
+
+.color-swatches img{
+    width:70px;
+    height:70px;
+    object-fit:cover;
+    border-radius:6px;
+    cursor:pointer;
+    border:2px solid transparent;
+}
+
+.color-swatches img.selected{
+    border-color:#0b2c68;
+}
+
+.width-row{
+    margin-bottom:22px;
+    font-size:16px;
+    color:#0b2c68;
+}
+
+.width-row span{
+    font-weight:normal;
+    color:#444;
+}
+
+.size-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+}
+
+.size-header a{
+    color:#0b2c68;
+    font-size:14px;
+    text-decoration:underline;
+}
+
+.size-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:12px;
+    margin-bottom:26px;
+}
+
+.size-grid .size{
+    border:1px solid #ccc;
+    border-radius:30px;
+    padding:14px 0;
+    text-align:center;
+    cursor:pointer;
+    color:#0b2c68;
+    font-size:15px;
+}
+
+.size-grid .size:hover{
+    border-color:#0b2c68;
+}
+
+.size-grid .size.selected{
+    background:#0b2c68;
+    color:white;
+    border-color:#0b2c68;
+}
+
+.size-grid .size.disabled{
+    color:#bbb;
+    text-decoration:line-through;
+    cursor:not-allowed;
+    background:#f7f7f7;
+}
+
+.select-size-btn{
+    width:100%;
+    padding:18px;
+    background:#0b2c68;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:16px;
+}
+
+.select-size-btn:hover{
+    background:#051c45;
+}
+
+.pay-line{
+    text-align:center;
+    font-size:14px;
+    color:#444;
+    margin-bottom:26px;
+}
+
+.perks{
+    border:1px solid #eee;
+    border-radius:8px;
+    margin-bottom:24px;
+}
+
+.perks .perk{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    padding:18px 20px;
+    border-bottom:1px solid #eee;
+    font-size:15px;
+    color:#333;
+}
+
+.perks .perk:last-child{
+    border-bottom:none;
+}
+
+.perks a{
+    color:#0b2c68;
+}
+
+.store-note{
+    text-align:center;
+    font-size:15px;
+}
+
+.store-note strong{
+    color:#0b2c68;
+}
+
+.store-note a{
+    color:#0b2c68;
+}
+
+.store-note .show-all{
+    display:block;
+    margin-top:6px;
+    color:#444;
+    font-size:14px;
+    text-decoration:none;
+}
+
+@media (max-width:900px){
+    .product-page{
+        grid-template-columns:1fr;
+        padding:20px 20px 60px;
+    }
+    .utility-row{ display:none; }
+    .main-nav{ padding:14px 20px; flex-wrap:wrap; gap:14px; }
+    .main-nav .nav-links{ gap:18px; font-size:15px; order:3; width:100%; justify-content:center; }
+    .size-grid{ grid-template-columns:repeat(4,1fr); }
+}
+</style>
+
+</head>
+<body>
+
+<div class="promo-bar">
+    <span class="arrow left">&#8249;</span>
+    Хямдралтай шинэ бараа хүлээж байна. <a href="#">Дэлгүүр хэсэх</a>
+    <span class="arrow right">&#8250;</span>
+</div>
+
+<div class="utility-row">
+    <a href="#">Дэлгүүрийн байршил</a>
+    <a href="#">Гишүүнчлэл</a>
+    <a href="#">Найзаа урих</a>
+    <a href="#">Мэдээлэл авах</a>
+</div>
+
+<nav class="main-nav">
+    <a href="index.html" class="logo">Fashion Shop</a>
+
+    <ul class="nav-links">
+        <li><a href="index.html">Shop</a></li>
+        <li><a href="#">New</a></li>
+        <li><a href="#">Sale</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+
+    <div class="nav-icons">
+        <span>&#128269;</span>
+        <span>&#128100;</span>
+        <span>
+            &#128722;
+            <span class="cart-count" id="cart">0</span>
+        </span>
+    </div>
+</nav>
+
+<div class="breadcrumb">
+    <a href="index.html">Нүүр</a> &nbsp;•&nbsp;
+    <a href="index.html">Бүтээгдэхүүн</a> &nbsp;•&nbsp;
+    Пүүз
+</div>
+
+<div class="product-page">
+
+    <div class="gallery">
+        <div class="gallery-main">
+            <img id="mainImage" src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=900&q=80" alt="Пүүз">
+        </div>
+        <div class="gallery-thumbs">
+            <img onclick="swapMain(this)" src="https://images.unsplash.com/photo-1465479423260-c4afc24172c6?auto=format&fit=crop&w=500&q=80" alt="Пүүз өнцөг 2">
+            <img onclick="swapMain(this)" src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=500&q=80" alt="Пүүз өнцөг 3">
+            <img onclick="swapMain(this)" src="https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=500&q=80" alt="Пүүз өнцөг 4">
+            <img onclick="swapMain(this)" src="https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?auto=format&fit=crop&w=500&q=80" alt="Пүүз өнцөг 5">
+        </div>
+    </div>
+
+    <div class="product-details">
+        <div class="eyebrow">
+            <a href="#">Эрэгтэй</a> &nbsp;•&nbsp;
+            <a href="#">Пүүз</a> &nbsp;•&nbsp;
+            <a href="#">Волейбол</a>
+        </div>
+
+        <h1>SKY ELITE FF 4</h1>
+        <div class="tagline">Хурдан хөдөлгөөнд зориулсан тогтвортой тулгуур.</div>
+
+        <div class="rating">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            4.5 (4)
+        </div>
+
+        <div class="price">220,000₮</div>
+
+        <div class="section-label">Өнгө <span>Цагаан/Хар</span></div>
+        <div class="color-swatches">
+            <img class="selected" onclick="selectColor(this)" src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=200&q=80">
+            <img onclick="selectColor(this)" src="https://images.unsplash.com/photo-1465479423260-c4afc24172c6?auto=format&fit=crop&w=200&q=80">
+            <img onclick="selectColor(this)" src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=200&q=80">
+            <img onclick="selectColor(this)" src="https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?auto=format&fit=crop&w=200&q=80">
+        </div>
+
+        <div class="width-row"><strong>Өргөн</strong> <span>Энгийн</span></div>
+
+        <div class="size-header">
+            <div class="section-label" style="margin-bottom:0">Хэмжээ</div>
+            <a href="#">Хэмжээний заавар</a>
+        </div>
+        <div class="size-grid" id="sizeGrid">
+            <div class="size" onclick="selectSize(this)">38</div>
+            <div class="size" onclick="selectSize(this)">38.5</div>
+            <div class="size" onclick="selectSize(this)">39</div>
+            <div class="size" onclick="selectSize(this)">40</div>
+            <div class="size" onclick="selectSize(this)">40.5</div>
+            <div class="size" onclick="selectSize(this)">41</div>
+            <div class="size" onclick="selectSize(this)">42</div>
+            <div class="size disabled">42.5</div>
+            <div class="size" onclick="selectSize(this)">43</div>
+            <div class="size" onclick="selectSize(this)">44</div>
+            <div class="size" onclick="selectSize(this)">45</div>
+            <div class="size disabled">46</div>
+        </div>
+
+        <button class="select-size-btn" id="ctaBtn" onclick="addToCart()">Хэмжээ сонгох</button>
+        <div class="pay-line">Хуваан төлөх боломжтой</div>
+
+        <div class="perks">
+            <div class="perk">
+                &#11088;
+                <span><a href="#">Гишүүн болох</a>. 50,000₮-с дээш захиалгад үнэгүй хүргэлт.</span>
+            </div>
+            <div class="perk">
+                &#128230;
+                <span><a href="#">Хялбар буцаалт</a>, онлайн болон дэлгүүрт.</span>
+            </div>
+            <div class="perk">
+                &#127873;
+                <span>Бэлэг болгож авах уу?</span>
+            </div>
+        </div>
+
+        <div class="store-note">
+            &#128151; <strong>Ойролцоох дэлгүүр хайх уу?</strong>
+            <a href="#">солих</a>
+            <a href="#" class="show-all">бүх байршлыг харах</a>
+        </div>
+    </div>
+
+</div>
+
+<footer style="margin-top:0;background:#0b2c68;color:white;text-align:center;padding:20px;">
+© 2026 Fashion Shop | Бүх эрх хуулиар хамгаалагдсан.
+</footer>
+
+<script>
+
+let selectedSize = null;
+
+function selectSize(el){
+    if(el.classList.contains("disabled")) return;
+    document.querySelectorAll(".size").forEach(s => s.classList.remove("selected"));
+    el.classList.add("selected");
+    selectedSize = el.innerText;
+    document.getElementById("ctaBtn").innerText = "Сагсанд хийх";
+}
+
+function selectColor(el){
+    document.querySelectorAll(".color-swatches img").forEach(s => s.classList.remove("selected"));
+    el.classList.add("selected");
+    document.getElementById("mainImage").src = el.src.replace("w=200","w=900");
+}
+
+function swapMain(el){
+    const main = document.getElementById("mainImage");
+    const current = main.src;
+    main.src = el.src.replace("w=500","w=900");
+    el.src = current.replace("w=900","w=500");
+}
+
+let cart = 0;
+
+function addToCart(){
+    if(!selectedSize){
+        alert("Эхлээд хэмжээгээ сонгоно уу.");
+        return;
+    }
+    cart++;
+    document.getElementById("cart").innerHTML = cart;
+    alert("Бүтээгдэхүүн сагсанд нэмэгдлээ. Хэмжээ: " + selectedSize);
+}
+</script>
+
+</body>
+</html>

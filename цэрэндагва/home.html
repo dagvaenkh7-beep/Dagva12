@@ -1,0 +1,2995 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fashion Shop</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f5f5f5; 
+}
+
+/* ===== Promo bar ===== */
+/* ===== Login modal ===== */
+.modal-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    z-index:2000;
+    justify-content:center;
+    align-items:flex-start;
+    padding-top:80px;
+}
+
+.modal-backdrop.open{
+    display:flex;
+}
+
+.login-modal{
+    width:100%;
+    max-width:420px;
+}
+
+.login-tabs{
+    display:flex;
+}
+
+.login-tabs .tab{
+    flex:1;
+    text-align:center;
+    padding:18px 0;
+    font-size:15px;
+    font-weight:bold;
+    letter-spacing:.5px;
+    cursor:pointer;
+    background:#888;
+    color:white;
+}
+
+.login-tabs .tab.active{
+    background:#0b2c68;
+}
+
+.login-modal-body{
+    background:white;
+    padding:34px 30px;
+    border-radius:0 0 6px 6px;
+}
+
+.login-modal-body p{
+    color:#333;
+    font-size:16px;
+    margin-bottom:24px;
+}
+
+.login-field{
+    display:flex;
+    margin-bottom:20px;
+}
+
+.login-field .icon-box{
+    width:60px;
+    flex-shrink:0;
+    background:#eee;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    border:1px solid #ccc;
+    border-right:none;
+}
+
+.login-field input{
+    flex:1;
+    border:1px solid #ccc;
+    padding:0 16px;
+    font-size:16px;
+}
+
+.forgot-link{
+    display:inline-block;
+    color:#0b2c68;
+    font-size:15px;
+    text-decoration:underline;
+    margin-bottom:26px;
+}
+
+.login-actions{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-bottom:24px;
+}
+
+.login-actions .cancel-link{
+    color:#0b2c68;
+    text-decoration:underline;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.login-actions .login-btn{
+    flex:1;
+    padding:16px;
+    background:#0b2c68;
+    color:white;
+    border:none;
+    font-size:16px;
+    font-weight:bold;
+    letter-spacing:.5px;
+    cursor:pointer;
+}
+
+.login-actions .login-btn:hover{
+    background:#051c45;
+}
+
+.secure-note{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:14px;
+    color:#333;
+}
+
+.new-shopper-body{
+    display:none;
+}
+
+.new-shopper-body.active{
+    display:block;
+}
+
+.login-body.hidden-tab{
+    display:none;
+}
+
+/* ===== Spin-to-win popup ===== */
+.spin-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    z-index:3000;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.spin-backdrop.open{
+    display:flex;
+}
+
+.spin-modal{
+    width:100%;
+    max-width:420px;
+    max-height:92vh;
+    overflow-y:auto;
+    background:
+        radial-gradient(circle at center, #fafafa 0%, #eee 100%);
+    border-radius:14px;
+    position:relative;
+    text-align:center;
+    padding:44px 30px 30px;
+}
+
+.spin-close{
+    position:absolute;
+    top:16px;
+    right:20px;
+    font-size:22px;
+    color:#333;
+    cursor:pointer;
+    background:none;
+    border:none;
+}
+
+.spin-modal h2{
+    color:#0b2c68;
+    font-size:34px;
+    line-height:1.15;
+    margin-bottom:18px;
+}
+
+.spin-modal .spin-subtitle{
+    color:#e08b1d;
+    font-size:18px;
+    line-height:1.4;
+    margin-bottom:30px;
+}
+
+.wheel-wrap{
+    position:relative;
+    width:280px;
+    height:280px;
+    margin:0 auto 30px;
+}
+
+.wheel{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border:6px solid #ddd;
+    background:conic-gradient(
+        #f0f0f0 0deg 60deg,
+        #e08b1d 60deg 120deg,
+        #f0f0f0 120deg 180deg,
+        #e08b1d 180deg 240deg,
+        #f0f0f0 240deg 300deg,
+        #e08b1d 300deg 360deg
+    );
+    transition:transform 4s cubic-bezier(.17,.67,.32,1.02);
+    position:relative;
+}
+
+.wheel-label{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:120px;
+    text-align:center;
+    font-weight:bold;
+    font-size:12px;
+    color:#222;
+    transform-origin:0 0;
+}
+
+.wheel-center{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:46px;
+    height:46px;
+    background:#0b2c68;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:20px;
+    z-index:5;
+}
+
+.wheel-pointer{
+    position:absolute;
+    top:-4px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0;
+    height:0;
+    border-left:12px solid transparent;
+    border-right:12px solid transparent;
+    border-top:20px solid #0b2c68;
+    z-index:6;
+}
+
+.spin-modal input[type=email]{
+    width:100%;
+    border:1px solid #e08b1d;
+    border-radius:6px;
+    padding:16px;
+    font-size:16px;
+    margin-bottom:18px;
+}
+
+.spin-btn{
+    width:100%;
+    padding:17px;
+    background:#e08b1d;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:18px;
+}
+
+.spin-btn:hover{
+    background:#c8770f;
+}
+
+.spin-btn:disabled{
+    background:#eec48b;
+    cursor:not-allowed;
+}
+
+.spin-consent{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    text-align:left;
+    font-size:13px;
+    color:#444;
+}
+
+.spin-consent input{
+    margin-top:3px;
+}
+
+.spin-consent a{
+    color:#444;
+    text-decoration:underline;
+}
+
+.spin-result{
+    display:none;
+    color:#0b2c68;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:18px;
+}
+
+/* ===== Welcome gift side tab ===== */
+.gift-tab-wrap{
+    display:none;
+    position:fixed;
+    top:50%;
+    right:0;
+    transform:translateY(-50%);
+    z-index:2500;
+    align-items:center;
+}
+
+.gift-tab-wrap.show{
+    display:flex;
+}
+
+.gift-tab-close{
+    background:#1c1f2b;
+    color:white;
+    border:none;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:13px;
+    margin-right:-13px;
+    z-index:2;
+    box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+
+.gift-tab{
+    background:#e08b1d;
+    color:white;
+    padding:22px 10px;
+    border-radius:8px 0 0 8px;
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    font-size:15px;
+    letter-spacing:1px;
+    cursor:pointer;
+    box-shadow:-2px 0 10px rgba(0,0,0,.2);
+}
+
+.gift-tab:hover{
+    background:#c8770f;
+}
+
+.gift-tab .arrow{
+    font-size:14px;
+}
+
+.search-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:white;
+    z-index:1000;
+    overflow-y:auto;
+}
+
+.search-overlay.open{
+    display:block;
+}
+
+.search-bar-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:20px 60px;
+    border-bottom:4px solid #0b2c68;
+}
+
+.search-bar-row input{
+    flex:1;
+    border:none;
+    outline:none;
+    font-size:22px;
+    color:#333;
+}
+
+.search-bar-row .search-icon,
+.search-bar-row .close-icon{
+    font-size:22px;
+    color:#0b2c68;
+    cursor:pointer;
+}
+
+.search-body{
+    display:flex;
+    gap:50px;
+    padding:35px 60px;
+}
+
+.trending-col{
+    width:220px;
+    flex-shrink:0;
+}
+
+.trending-col h3{
+    font-size:15px;
+    letter-spacing:1px;
+    color:#0b2c68;
+    margin-bottom:18px;
+}
+
+.trending-list{
+    display:flex;
+    flex-direction:column;
+}
+
+.trending-list a{
+    padding:12px 14px;
+    color:#333;
+    text-decoration:none;
+    font-size:16px;
+    border-radius:4px;
+}
+
+.trending-list a:first-child{
+    background:#f5f5f5;
+    font-weight:bold;
+    color:#0b2c68;
+}
+
+.trending-list a:hover{
+    background:#f5f5f5;
+}
+
+.suggested-col h3{
+    font-size:15px;
+    letter-spacing:1px;
+    color:#0b2c68;
+    margin-bottom:24px;
+}
+
+.suggested-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:30px;
+}
+
+.suggested-grid .s-card{
+    text-align:center;
+    cursor:pointer;
+}
+
+.suggested-grid .s-card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    margin-bottom:16px;
+    background:#f5f5f5;
+    border-radius:6px;
+}
+
+.suggested-grid .s-card .s-title{
+    font-size:14px;
+    font-weight:bold;
+    color:#222;
+    letter-spacing:.5px;
+    margin-bottom:8px;
+    line-height:1.4;
+}
+
+.suggested-grid .s-card .s-price{
+    font-size:15px;
+    font-weight:bold;
+    color:#222;
+}
+
+@media (max-width:768px){
+    .search-bar-row{ padding:16px 20px; }
+    .search-body{ flex-direction:column; padding:25px 20px; }
+    .trending-col{ width:100%; }
+}
+
+.promo-bar{
+    background:#f0f0f0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    padding:12px 20px;
+    font-size:14px;
+    color:#0b2c68;
+    position:relative;
+}
+
+.promo-bar .arrow{
+    position:absolute;
+    cursor:pointer;
+    font-size:18px;
+    color:#0b2c68;
+    user-select:none;
+}
+
+.promo-bar .arrow.left{ left:20px; }
+.promo-bar .arrow.right{ right:20px; }
+
+.promo-bar a{
+    color:#0b2c68;
+    font-weight:bold;
+    text-decoration:underline;
+}
+
+/* ===== Region select modal (dark) ===== */
+.region-modal-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    z-index:3500;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+}
+
+.region-modal-backdrop.open{
+    display:flex;
+}
+
+.region-modal{
+    background:#181818;
+    color:white;
+    width:100%;
+    max-width:700px;
+    max-height:90vh;
+    border-radius:10px;
+    overflow-y:auto;
+}
+
+.region-modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding:28px 30px 0;
+}
+
+.region-modal-header h2{
+    font-size:26px;
+    letter-spacing:.5px;
+}
+
+.region-modal-close{
+    background:none;
+    border:none;
+    color:white;
+    font-size:24px;
+    cursor:pointer;
+    line-height:1;
+}
+
+.region-modal-desc{
+    padding:16px 30px 24px;
+    color:#bbb;
+    font-size:15px;
+    line-height:1.5;
+}
+
+.region-modal-desc a{
+    color:#e08b1d;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.region-modal-desc a:hover{
+    text-decoration:underline;
+}
+
+.region-search-wrap{
+    padding:0 30px 24px;
+}
+
+.region-search{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#232323;
+    border:1px solid #333;
+    border-radius:8px;
+    padding:14px 18px;
+}
+
+.region-search span{
+    color:#888;
+    font-size:16px;
+}
+
+.region-search input{
+    flex:1;
+    background:none;
+    border:none;
+    outline:none;
+    color:white;
+    font-size:15px;
+}
+
+.region-search input::placeholder{
+    color:#888;
+}
+
+.region-section{
+    border-top:1px solid #2a2a2a;
+    padding:20px 30px 6px;
+}
+
+.region-section-title{
+    font-size:13px;
+    letter-spacing:1.5px;
+    color:#999;
+    margin-bottom:16px;
+    font-weight:bold;
+}
+
+.region-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-bottom:14px;
+}
+
+@media (max-width:600px){
+    .region-grid{ grid-template-columns:1fr; }
+}
+
+.region-country-card{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:#232323;
+    border-radius:8px;
+    padding:16px 18px;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.region-country-card:hover{
+    background:#2c2c2c;
+}
+
+.region-country-card .flag{
+    font-size:26px;
+}
+
+.region-country-card .name{
+    font-weight:bold;
+    font-size:16px;
+    margin-bottom:2px;
+}
+
+.region-country-card .meta{
+    font-size:13px;
+    color:#999;
+}
+
+.region-country-card.hidden{
+    display:none;
+}
+
+.region-official-section{
+    border-top:1px solid #2a2a2a;
+    padding:20px 30px 30px;
+}
+
+.region-official-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
+    letter-spacing:1.5px;
+    color:#e08b1d;
+    font-weight:bold;
+    margin-bottom:16px;
+}
+
+.region-official-link{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border:1px solid #e08b1d;
+    border-radius:8px;
+    padding:14px 18px;
+    margin-bottom:12px;
+    color:white;
+    text-decoration:none;
+    font-size:15px;
+}
+
+.region-official-link:hover{
+    background:rgba(224,139,29,.1);
+}
+
+.region-official-link .url{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#ccc;
+    font-family:monospace;
+}
+
+.region-official-link .lang{
+    font-weight:bold;
+}
+
+/* ===== Region selector ===== */
+.region-selector{
+    position:relative;
+}
+
+.region-toggle{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    cursor:pointer;
+    color:#0b2c68;
+}
+
+.region-toggle .flag{
+    font-size:18px;
+}
+
+.region-toggle .chevron{
+    font-size:11px;
+    transition:.2s;
+}
+
+.region-selector.open .region-toggle .chevron{
+    transform:rotate(180deg);
+}
+
+.region-dropdown{
+    display:none;
+    position:absolute;
+    top:calc(100% + 14px);
+    right:0;
+    background:white;
+    border:1px solid #ddd;
+    border-radius:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,.12);
+    padding:8px;
+    width:220px;
+    z-index:100;
+}
+
+.region-selector.open .region-dropdown{
+    display:block;
+}
+
+.region-dropdown a{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:12px 10px;
+    color:#333;
+    text-decoration:none;
+    font-size:15px;
+    border-radius:6px;
+}
+
+.region-dropdown a:hover{
+    background:#f5f5f5;
+}
+
+.region-dropdown .flag{
+    font-size:22px;
+}
+
+.finder-dropdown a{
+    text-align:center;
+    justify-content:center;
+    font-size:16px;
+    padding:14px 10px;
+}
+
+/* ===== Utility row ===== */
+.utility-row{
+    display:flex;
+    justify-content:flex-end;
+    gap:28px;
+    padding:14px 60px;
+    font-size:14px;
+    border-bottom:1px solid #eee;
+    background:white;
+}
+
+.utility-row a{
+    color:#0b2c68;
+    text-decoration:none;
+}
+
+.utility-row a:hover{
+    text-decoration:underline;
+}
+
+/* ===== Main nav ===== */
+.main-nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 60px;
+    background:white;
+    border-bottom:1px solid #eee;
+}
+
+.main-nav .logo{
+    font-size:26px;
+    font-weight:bold;
+    color:#0b2c68;
+    text-decoration:none;
+}
+
+.main-nav .nav-links{
+    display:flex;
+    gap:36px;
+    list-style:none;
+}
+
+.main-nav .nav-links a{
+    color:#0b2c68;
+    text-decoration:none;
+    font-size:17px;
+}
+
+.main-nav .nav-links a:hover{
+    text-decoration:underline;
+}
+
+.main-nav .nav-icons{
+    display:flex;
+    align-items:center;
+    gap:22px;
+}
+
+.main-nav .nav-icons span{
+    font-size:20px;
+    color:#0b2c68;
+    cursor:pointer;
+    position:relative;
+}
+
+.cart-count{
+    position:absolute;
+    top:-8px;
+    right:-10px;
+    background:#0b2c68;
+    color:white;
+    font-size:11px;
+    border-radius:50%;
+    width:18px;
+    height:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.hero{
+    height:350px;
+    background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),
+    url("https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1400&q=80");
+    background-size:cover;
+    background-position:center;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    color:white;
+}
+
+.hero h1{
+    font-size:55px;
+}
+
+.hero p{
+    margin-top:10px;
+    font-size:20px;
+}
+
+/* ===== Way of Wade promo banner ===== */
+.wow-banner{
+    position:relative;
+    display:block;
+    width:100%;
+    line-height:0;
+}
+
+.wow-banner img{
+    width:100%;
+    height:auto;
+    display:block;
+}
+
+.container{
+    width:90%;
+    margin:50px auto;
+}
+
+.container h2{
+    text-align:center;
+    margin-bottom:35px;
+    color:#0b2c68;
+}
+
+.main-layout{
+    display:flex;
+    align-items:flex-start;
+    gap:35px;
+}
+
+.filters{
+    width:260px;
+    flex-shrink:0;
+    background:white;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    padding:25px 22px;
+}
+
+.filters.hidden{
+    display:none;
+}
+
+.filters-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:22px;
+    font-weight:bold;
+    color:#0b2c68;
+    margin-bottom:18px;
+}
+
+.filter-group{
+    border-top:1px solid #eee;
+}
+
+.filter-group:last-child{
+    border-bottom:1px solid #eee;
+}
+
+.filter-toggle{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px 0;
+    cursor:pointer;
+    color:#0b2c68;
+    font-weight:bold;
+    font-size:16px;
+}
+
+.filter-toggle .icon{
+    font-size:20px;
+    font-weight:normal;
+    transition:.2s;
+}
+
+.filter-group.open .filter-toggle .icon{
+    transform:rotate(45deg);
+}
+
+.filter-options{
+    display:none;
+    flex-direction:column;
+    gap:10px;
+    padding-bottom:16px;
+    font-size:15px;
+    color:#333;
+}
+
+.filter-group.open .filter-options{
+    display:flex;
+}
+
+.filter-options label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    cursor:pointer;
+}
+
+.products-col{
+    flex:1;
+}
+
+@media (max-width:768px){
+    .main-layout{ flex-direction:column; }
+    .filters{ width:100%; }
+}
+
+.load-more-wrap{
+    text-align:center;
+    margin-top:45px;
+}
+
+.load-more-wrap .showing-text{
+    color:#0b2c68;
+    font-size:16px;
+    margin-bottom:14px;
+}
+
+.progress-track{
+    width:280px;
+    height:6px;
+    background:#eee;
+    border-radius:10px;
+    margin:0 auto 26px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    background:#0b2c68;
+    border-radius:10px;
+}
+
+.load-more-btn{
+    padding:16px 50px;
+    background:#0b2c68;
+    color:white;
+    border:none;
+    border-radius:30px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.load-more-btn:hover{
+    background:#051c45;
+}
+
+.load-more-btn:disabled{
+    background:#ccc;
+    cursor:not-allowed;
+}
+
+.seo-blurb{
+    margin-top:70px;
+    color:#0b2c68;
+}
+
+.seo-blurb p{
+    font-weight:bold;
+    font-size:18px;
+    margin-bottom:14px;
+}
+
+.seo-blurb .extra{
+    display:none;
+    font-weight:normal;
+    font-size:15px;
+    color:#333;
+    line-height:1.6;
+    margin-bottom:14px;
+}
+
+.seo-blurb .extra.open{
+    display:block;
+}
+
+.view-more-toggle{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.view-more-toggle .chevron{
+    transition:.2s;
+}
+
+.view-more-toggle.open .chevron{
+    transform:rotate(180deg);
+}
+
+.list-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:35px;
+    flex-wrap:wrap;
+    gap:16px;
+}
+
+.list-header .breadcrumb{
+    font-size:14px;
+    color:#0b2c68;
+    margin-top:8px;
+}
+
+.list-header .breadcrumb a{
+    color:#0b2c68;
+    text-decoration:none;
+}
+
+.list-header .breadcrumb a:hover{
+    text-decoration:underline;
+}
+
+.list-header h1{
+    color:#0b2c68;
+    font-size:40px;
+}
+
+.sort-by{
+    position:relative;
+}
+
+.sort-by select{
+    appearance:none;
+    border:1px solid #0b2c68;
+    border-radius:30px;
+    padding:12px 40px 12px 22px;
+    font-size:16px;
+    color:#0b2c68;
+    background:white;
+    cursor:pointer;
+}
+
+.sort-by::after{
+    content:"\25BE";
+    position:absolute;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#0b2c68;
+    pointer-events:none;
+}
+
+.list-toolbar{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:35px;
+}
+
+.list-toolbar .count{
+    color:#333;
+    font-size:15px;
+    margin-right:6px;
+}
+
+.view-switcher{
+    display:flex;
+    gap:6px;
+    margin-left:auto;
+}
+
+.view-switcher .view-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:2px;
+    width:44px;
+    height:38px;
+    border:1px solid #ccc;
+    border-radius:4px;
+    background:white;
+    cursor:pointer;
+}
+
+.view-switcher .view-btn:hover{
+    border-color:#0b2c68;
+}
+
+.view-switcher .view-btn.active{
+    border-color:#0b2c68;
+    background:#eef1f7;
+}
+
+.view-switcher .view-btn .bar{
+    width:3px;
+    height:20px;
+    background:#999;
+    border-radius:1px;
+}
+
+.view-switcher .view-btn.active .bar{
+    background:#0b2c68;
+}
+
+.view-switcher .view-btn.list .bar{
+    width:20px;
+    height:3px;
+    margin:2px 0;
+}
+
+.pill{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid #ccc;
+    border-radius:30px;
+    padding:11px 20px;
+    font-size:15px;
+    color:#333;
+    background:white;
+    cursor:pointer;
+}
+
+.pill:hover{
+    border-color:#0b2c68;
+}
+
+.pill.active{
+    border-color:#0b2c68;
+    color:#0b2c68;
+}
+
+.pill select{
+    appearance:none;
+    border:none;
+    background:none;
+    font-size:15px;
+    color:#333;
+    cursor:pointer;
+    padding-right:4px;
+}
+
+.pill .chev{
+    font-size:11px;
+    color:#666;
+}
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.15);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card img{
+    width:100%;
+    height:280px;
+    object-fit:cover;
+}
+
+.info{
+    padding:20px;
+    text-align:center;
+}
+
+.info h3{
+    margin-bottom:10px;
+}
+
+.price{
+    color:red;
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+button{
+    width:100%;
+    padding:13px;
+    background:#0b2c68;
+    color:white;
+    border:none;
+    cursor:pointer;
+    font-size:17px;
+}
+
+button:hover{
+    background:#051c45;
+}
+
+/* ===== Wade Team membership banner ===== */
+.wade-team-banner{
+    position:relative;
+    margin-top:70px;
+    padding:110px 60px;
+    background:
+        linear-gradient(90deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.85) 55%, rgba(10,10,10,.95) 100%),
+        url("https://images.unsplash.com/photo-1608245449230-4ac19066d2d0?auto=format&fit=crop&w=1600&q=80");
+    background-size:cover;
+    background-position:center;
+    filter:grayscale(1);
+    color:white;
+}
+
+.wade-team-banner .wtb-inner{
+    filter:none;
+    max-width:640px;
+}
+
+.wade-team-banner h2{
+    font-size:44px;
+    letter-spacing:1px;
+    text-align:left;
+    color:white;
+    margin-bottom:22px;
+}
+
+.wade-team-banner .wtb-sub{
+    font-size:20px;
+    color:#eee;
+    margin-bottom:34px;
+}
+
+.wtb-join-btn{
+    display:inline-block;
+    padding:16px 40px;
+    border:2px solid white;
+    color:white;
+    background:none;
+    font-size:15px;
+    font-weight:bold;
+    letter-spacing:1px;
+    cursor:pointer;
+    margin-bottom:18px;
+}
+
+.wtb-join-btn:hover{
+    background:white;
+    color:#111;
+}
+
+.wade-team-banner .wtb-terms{
+    font-size:13px;
+    color:#999;
+}
+
+@media (max-width:768px){
+    .wade-team-banner{ padding:70px 30px; }
+    .wade-team-banner h2{ font-size:30px; }
+}
+
+footer{
+    margin-top:60px;
+    background:#0b2c68;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+.bottom-bar{
+    background:#2b2b2b;
+    color:#aaa;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 40px;
+    gap:20px;
+    font-size:15px;
+}
+
+.bottom-bar .copyright a{
+    color:#ccc;
+    text-decoration:none;
+}
+
+.payment-badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.payment-badges .badge{
+    background:white;
+    color:#222;
+    font-weight:bold;
+    font-size:12px;
+    border-radius:4px;
+    padding:8px 12px;
+    letter-spacing:.5px;
+    min-width:44px;
+    text-align:center;
+}
+
+/* ===== Accessibility effect classes (applied to <html>) ===== */
+html.a11y-large-text{ font-size:112%; }
+html.a11y-larger-text{ font-size:126%; }
+html.a11y-largest-text{ font-size:140%; }
+
+html.a11y-contrast-1 body{ filter:contrast(1.25); }
+html.a11y-contrast-2 body{ background:#000 !important; filter:invert(1) hue-rotate(180deg); }
+
+html.a11y-sat-low body{ filter:saturate(.4); }
+html.a11y-sat-gray body{ filter:grayscale(1); }
+html.a11y-sat-high body{ filter:saturate(1.8); }
+
+html.a11y-highlight-links a{
+    outline:2px solid #e08b1d !important;
+    background:#fff6e6 !important;
+}
+
+html.a11y-ls-1 body{ letter-spacing:.5px; }
+html.a11y-ls-2 body{ letter-spacing:1.5px; }
+html.a11y-ls-3 body{ letter-spacing:3px; }
+
+html.a11y-line-1 body *{ line-height:1.6 !important; }
+html.a11y-line-2 body *{ line-height:2 !important; }
+html.a11y-line-3 body *{ line-height:2.5 !important; }
+
+html.a11y-readable-font body{
+    font-family:Verdana, Tahoma, sans-serif !important;
+}
+
+html.a11y-align-center body *{ text-align:center !important; }
+html.a11y-align-left body *{ text-align:left !important; }
+
+html.a11y-hide-images img{ visibility:hidden !important; }
+
+html.a11y-mute-sound audio, html.a11y-mute-sound video{ display:none !important; }
+
+html.a11y-stop-anim *{
+    animation:none !important;
+    transition:none !important;
+}
+
+html.a11y-bw-cursor, html.a11y-bw-cursor *{
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M4 2 L4 20 L9 15 L12 22 L15 21 L12 14 L19 14 Z" fill="black" stroke="white" stroke-width="1.5"/></svg>') 4 2, auto !important;
+}
+
+html.a11y-reader-view .promo-bar,
+html.a11y-reader-view .utility-row,
+html.a11y-reader-view .filters,
+html.a11y-reader-view .search-overlay,
+html.a11y-reader-view .list-toolbar,
+html.a11y-reader-view .bottom-bar,
+html.a11y-reader-view .bottom-row2,
+html.a11y-reader-view .site-footer{
+    display:none !important;
+}
+
+html.a11y-reader-view .main-layout{
+    display:block !important;
+}
+
+html.a11y-reader-view .container{
+    max-width:760px;
+}
+
+.reading-guide-bar{
+    display:none;
+    position:fixed;
+    left:0;
+    right:0;
+    height:36px;
+    background:rgba(224,139,29,.25);
+    border-top:2px solid #e08b1d;
+    border-bottom:2px solid #e08b1d;
+    pointer-events:none;
+    z-index:5000;
+}
+
+.reading-guide-bar.active{
+    display:block;
+}
+
+/* ===== Accessibility panel ===== */
+.a11y-panel{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    width:100%;
+    max-width:400px;
+    background:#f4f4f4;
+    z-index:4000;
+    flex-direction:column;
+    box-shadow:4px 0 24px rgba(0,0,0,.3);
+}
+
+.a11y-panel.open{
+    display:flex;
+}
+
+.a11y-panel.right-side{
+    left:auto;
+    right:0;
+    box-shadow:-4px 0 24px rgba(0,0,0,.3);
+}
+
+.a11y-header{
+    background:#1c1f2b;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 22px;
+    font-weight:bold;
+    font-size:16px;
+    flex-shrink:0;
+}
+
+.a11y-header button{
+    background:none;
+    border:none;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+}
+
+.a11y-body{
+    overflow-y:auto;
+    padding:22px 22px 100px;
+    flex:1;
+}
+
+.a11y-row-title{
+    font-weight:bold;
+    color:#1c1f2b;
+    font-size:16px;
+    margin-bottom:12px;
+}
+
+.a11y-toggle-pair{
+    display:flex;
+    border:1px solid #1c1f2b;
+    border-radius:8px;
+    overflow:hidden;
+    margin-bottom:26px;
+}
+
+.a11y-toggle-pair div{
+    flex:1;
+    text-align:center;
+    padding:14px 0;
+    cursor:pointer;
+    font-size:15px;
+    color:#999;
+}
+
+.a11y-toggle-pair div.active{
+    color:#1c1f2b;
+    font-weight:bold;
+    background:white;
+}
+
+.a11y-lang-select{
+    width:100%;
+    border:1px solid #ccc;
+    border-radius:8px;
+    padding:14px 16px;
+    font-size:15px;
+    background:white;
+    margin-bottom:26px;
+}
+
+.a11y-section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:bold;
+    color:#1c1f2b;
+    font-size:15px;
+    padding:14px 0;
+    border-top:1px solid #ddd;
+    cursor:pointer;
+}
+
+.a11y-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-bottom:10px;
+}
+
+.a11y-grid.three{
+    grid-template-columns:1fr 1fr 1fr;
+}
+
+.a11y-card{
+    background:white;
+    border-radius:10px;
+    border:2px solid transparent;
+    text-align:center;
+    padding:20px 10px;
+    cursor:pointer;
+    font-size:14px;
+    color:#1c1f2b;
+}
+
+.a11y-card .a11y-icon{
+    font-size:24px;
+    margin-bottom:10px;
+}
+
+.a11y-card.active{
+    border-color:#e08b1d;
+    background:#fff6e6;
+}
+
+.a11y-dots{
+    margin-top:8px;
+    display:flex;
+    justify-content:center;
+    gap:4px;
+}
+
+.a11y-dots span{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#ddd;
+}
+
+.a11y-dots span.filled{
+    background:#e08b1d;
+}
+
+.a11y-reset-btn{
+    position:sticky;
+    bottom:0;
+    background:#f4f4f4;
+    padding-top:14px;
+}
+
+.a11y-reset-btn button{
+    width:100%;
+    padding:16px;
+    background:#1c1f2b;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    font-size:15px;
+    cursor:pointer;
+    margin-bottom:14px;
+}
+
+.a11y-footer-links{
+    display:flex;
+    gap:20px;
+    font-size:13px;
+    color:#333;
+}
+
+.a11y-footer-links a{
+    color:#333;
+}
+
+@media (max-width:480px){
+    .a11y-panel{ max-width:100%; }
+}
+
+.bottom-row2{
+    background:#2b2b2b;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 40px 34px;
+    flex-wrap:wrap;
+    gap:16px;
+}
+
+.a11y-btn{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    border:1px solid #777;
+    background:none;
+    color:#ddd;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.a11y-btn:hover{
+    border-color:#fff;
+    color:#fff;
+}
+
+.help-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#111;
+    color:white;
+    border:1px solid #444;
+    border-radius:30px;
+    padding:12px 22px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.help-btn:hover{
+    background:#000;
+}
+
+@media (max-width:768px){
+    .bottom-bar{ padding:20px; flex-direction:column; align-items:flex-start; }
+    .bottom-row2{ padding:16px 20px 28px; }
+}
+
+.site-footer{
+  background:#0b2c68;
+  color:white;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:40px;
+  padding:60px 80px;
+}
+
+.site-footer h3{
+  font-size:28px;
+  margin-bottom:30px;
+}
+
+.site-footer a{
+  display:block;
+  color:white;
+  text-decoration:none;
+  font-size:20px;
+  margin-bottom:28px;
+}
+
+@media (max-width:768px){
+    .utility-row{ display:none; }
+    .main-nav{ padding:14px 20px; flex-wrap:wrap; gap:14px; }
+    .main-nav .nav-links{ gap:18px; font-size:15px; order:3; width:100%; justify-content:center; }
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="reading-guide-bar" id="readingGuideBar"></div>
+
+<div class="a11y-panel" id="a11yPanel">
+    <div class="a11y-header">
+        <span>Хандалтын цэс (Ctrl + X)</span>
+        <button onclick="closeA11yPanel()">&#10005;</button>
+    </div>
+
+    <div class="a11y-body">
+
+        <div class="a11y-row-title">Виджетийн хэмжээ</div>
+        <div class="a11y-toggle-pair">
+            <div class="active" id="widgetSizeNormal" onclick="setWidgetSize('normal')">Энгийн</div>
+            <div id="widgetSizeLarge" onclick="setWidgetSize('large')">Том</div>
+        </div>
+
+        <div class="a11y-row-title">Хэл</div>
+        <select class="a11y-lang-select">
+            <option>🇲🇳 Монгол</option>
+            <option>🇺🇸 English (US)</option>
+        </select>
+
+        <div class="a11y-section-header">Хэрэгцээгээ сонгоно уу <span>&#9650;</span></div>
+        <div class="a11y-grid" id="presetGrid">
+            <div class="a11y-card" data-preset="motor" onclick="applyPreset('motor')">
+                <div class="a11y-icon">&#9855;</div>Хөдөлгөөний бэрхшээл
+            </div>
+            <div class="a11y-card" data-preset="color" onclick="applyPreset('color')">
+                <div class="a11y-icon">&#128167;</div>Өнгө ялгах бэрхшээл
+            </div>
+            <div class="a11y-card" data-preset="vision" onclick="applyPreset('vision')">
+                <div class="a11y-icon">&#128065;</div>Харааны бэрхшээл
+            </div>
+            <div class="a11y-card" data-preset="cognitive" onclick="applyPreset('cognitive')">
+                <div class="a11y-icon">&#129504;</div>Анхаарал төвлөрүүлэх
+            </div>
+            <div class="a11y-card" data-preset="epileptic" onclick="applyPreset('epileptic')">
+                <div class="a11y-icon">&#9889;</div>Эпилепсийн аюулгүй
+            </div>
+            <div class="a11y-card" data-preset="adhd" onclick="applyPreset('adhd')">
+                <div class="a11y-icon">&#127919;</div>ADHD-д ээлтэй
+            </div>
+        </div>
+
+        <div class="a11y-section-header">Дүрслэлийн тохиргоо <span>&#9650;</span></div>
+        <div class="a11y-grid three">
+            <div class="a11y-card" id="cardContrast" onclick="cycleContrast()">
+                <div class="a11y-icon">&#9680;</div>Контраст
+                <div class="a11y-dots" id="dotsContrast"><span></span><span></span></div>
+            </div>
+            <div class="a11y-card" id="cardSaturation" onclick="cycleSaturation()">
+                <div class="a11y-icon">&#127752;</div>Өнгөний ханалт
+                <div class="a11y-dots" id="dotsSaturation"><span></span><span></span><span></span></div>
+            </div>
+            <div class="a11y-card" id="cardHighlight" onclick="toggleHighlightLinks()">
+                <div class="a11y-icon">&#128279;</div>Холбоос онцлох
+            </div>
+        </div>
+
+        <div class="a11y-section-header">Контентын тохиргоо <span>&#9650;</span></div>
+        <div class="a11y-grid three">
+            <div class="a11y-card" id="cardTextSize" onclick="cycleTextSize()">
+                <div class="a11y-icon">T&#8597;</div>Текстийн хэмжээ
+                <div class="a11y-dots" id="dotsTextSize"><span></span><span></span><span></span></div>
+            </div>
+            <div class="a11y-card" id="cardAlign" onclick="cycleAlign()">
+                <div class="a11y-icon">&#9776;</div>Текст зэрэгцүүлэлт
+            </div>
+            <div class="a11y-card" id="cardLetterSpacing" onclick="cycleLetterSpacing()">
+                <div class="a11y-icon">&#8596;</div>Үсгийн зай
+                <div class="a11y-dots" id="dotsLetterSpacing"><span></span><span></span><span></span></div>
+            </div>
+            <div class="a11y-card" id="cardLineSpacing" onclick="cycleLineSpacing()">
+                <div class="a11y-icon">&#8597;</div>Мөрийн зай
+                <div class="a11y-dots" id="dotsLineSpacing"><span></span><span></span><span></span></div>
+            </div>
+            <div class="a11y-card" id="cardReadableFont" onclick="toggleReadableFont()">
+                <div class="a11y-icon">Df</div>Уншихад хялбар фонт
+            </div>
+        </div>
+
+        <div class="a11y-section-header">Уншихад туслах <span>&#9650;</span></div>
+        <div class="a11y-grid three">
+            <div class="a11y-card" id="cardTTS" onclick="toggleTextToSpeech()">
+                <div class="a11y-icon">&#128172;</div>Текст унших
+            </div>
+            <div class="a11y-card" id="cardHideImages" onclick="toggleHideImages()">
+                <div class="a11y-icon">&#128444;</div>Зураг нуух
+            </div>
+            <div class="a11y-card" id="cardStopAnim" onclick="toggleStopAnim()">
+                <div class="a11y-icon">&#9208;</div>Анимэйшн зогсоох
+            </div>
+            <div class="a11y-card" id="cardReaderView" onclick="toggleReaderView()">
+                <div class="a11y-icon">&#128214;</div>Уншигчийн харагдац
+            </div>
+            <div class="a11y-card" id="cardReadingGuide" onclick="toggleReadingGuide()">
+                <div class="a11y-icon">&#9645;</div>Уншлагын заагч
+            </div>
+            <div class="a11y-card" id="cardBwCursor" onclick="toggleBwCursor()">
+                <div class="a11y-icon">&#10148;</div>Хар/цагаан курсор
+            </div>
+        </div>
+
+        <div class="a11y-section-header">Виджет харуулах / нуух <span>&#9650;</span></div>
+        <div class="a11y-toggle-pair">
+            <div class="active" id="widgetPosLeft" onclick="setWidgetPosition('left')">Зүүн</div>
+            <div id="widgetPosRight" onclick="setWidgetPosition('right')">Баруун</div>
+        </div>
+
+        <div class="a11y-reset-btn">
+            <button onclick="resetA11y()">Анхны төлөвт шинэчлэх</button>
+            <div class="a11y-footer-links">
+                <a href="#">Хандалтын мэдэгдэл</a>
+                <a href="#">Асуудал мэдэгдэх</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="spin-backdrop" id="spinBackdrop">
+    <div class="spin-modal">
+        <button class="spin-close" onclick="closeSpin()">&#10005;</button>
+
+        <h2>Fashion Shop Club-д нэгд. Шагналаа нээ.</h2>
+        <div class="spin-subtitle">Зөвхөн шинэ гишүүдэд — эргүүлж угтах бэлгээ аваарай</div>
+
+        <div class="wheel-wrap">
+            <div class="wheel-pointer"></div>
+            <div class="wheel" id="wheel">
+                <div class="wheel-label" style="transform:rotate(30deg) translate(60px,-10px)">10,000₮</div>
+                <div class="wheel-label" style="transform:rotate(90deg) translate(60px,-10px)">30,000₮</div>
+                <div class="wheel-label" style="transform:rotate(150deg) translate(60px,-10px)">5,000₮</div>
+                <div class="wheel-label" style="transform:rotate(210deg) translate(60px,-10px)">15,000₮</div>
+                <div class="wheel-label" style="transform:rotate(270deg) translate(60px,-10px)">7,000₮</div>
+                <div class="wheel-label" style="transform:rotate(330deg) translate(60px,-10px)">20,000₮</div>
+            </div>
+            <div class="wheel-center">&#10024;</div>
+        </div>
+
+        <div class="spin-result" id="spinResult"></div>
+
+        <input type="email" id="spinEmail" placeholder="Имэйл">
+
+        <button class="spin-btn" id="spinBtn" onclick="spinWheel()">Эргүүлж бэлгээ ав</button>
+
+        <label class="spin-consent">
+            <input type="checkbox" checked>
+            <span>Маркетингийн имэйл болон манай <a href="#">Нууцлалын бодлого</a>-ыг зөвшөөрч байна.</span>
+        </label>
+    </div>
+</div>
+
+<div class="gift-tab-wrap" id="giftTabWrap">
+    <button class="gift-tab-close" onclick="dismissGiftTab(event)">&#10005;</button>
+    <div class="gift-tab" onclick="openSpin()">
+        <span class="arrow">&#9650;</span>
+        УГТАХ БЭЛЭГ
+    </div>
+</div>
+
+
+<div class="modal-backdrop" id="loginBackdrop" onclick="closeLoginOnBackdrop(event)">
+    <div class="login-modal">
+        <div class="login-tabs">
+            <div class="tab active" id="loginTab" onclick="switchLoginTab('login')">LOGIN</div>
+            <div class="tab" id="newShopperTab" onclick="switchLoginTab('new')">NEW SHOPPER</div>
+        </div>
+
+        <div class="login-modal-body" id="loginBody">
+            <p>Имэйл хаяг болон нууц үгээрээ нэвтэрнэ үү.</p>
+
+            <div class="login-field">
+                <div class="icon-box">&#9993;</div>
+                <input type="email" id="loginEmail" placeholder="">
+            </div>
+
+            <div class="login-field">
+                <div class="icon-box">&#128274;</div>
+                <input type="password" id="loginPassword" placeholder="">
+            </div>
+
+            <a href="#" class="forgot-link">Нууц үгээ мартсан уу?</a>
+
+            <div class="login-actions">
+                <span class="cancel-link" onclick="closeLogin()">ЦУЦЛАХ</span>
+                <button class="login-btn" onclick="submitLogin()">НЭВТРЭХ</button>
+            </div>
+
+            <div class="secure-note">
+                &#128274; Энэ вэбсайттай холбогдсон холболт аюулгүй.
+            </div>
+        </div>
+
+        <div class="login-modal-body" id="newShopperBody" style="display:none;">
+            <p>Шинэ хэрэглэгч үү? Имэйл хаягаараа бүртгүүлээрэй.</p>
+
+            <div class="login-field">
+                <div class="icon-box">&#9993;</div>
+                <input type="email" id="newEmail" placeholder="">
+            </div>
+
+            <div class="login-actions">
+                <span class="cancel-link" onclick="closeLogin()">ЦУЦЛАХ</span>
+                <button class="login-btn" onclick="submitNewShopper()">ҮРГЭЛЖЛҮҮЛЭХ</button>
+            </div>
+
+            <div class="secure-note">
+                &#128274; Энэ вэбсайттай холбогдсон холболт аюулгүй.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="region-modal-backdrop" id="regionModalBackdrop" onclick="closeRegionModalOnBackdrop(event)">
+    <div class="region-modal">
+        <div class="region-modal-header">
+            <h2>SELECT REGION</h2>
+            <button class="region-modal-close" onclick="closeRegionModal()">&#10005;</button>
+        </div>
+
+        <div class="region-modal-desc">
+            Choose your shipping destination &amp; preferred language. If your country or region is not on the list, you can <a href="#">suggest it to us</a>
+        </div>
+
+        <div class="region-search-wrap">
+            <div class="region-search">
+                <span>&#128269;</span>
+                <input type="text" id="regionSearchInput" placeholder="Search for country..." oninput="filterRegionCountries()">
+            </div>
+        </div>
+
+        <div class="region-section">
+            <div class="region-section-title">NORTH AMERICA</div>
+            <div class="region-grid">
+                <div class="region-country-card" data-name="canada" onclick="selectRegionCountry('🇨🇦','Canada','CAD','English')">
+                    <span class="flag">🇨🇦</span>
+                    <div><div class="name">Canada</div><div class="meta">CAD | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="mexico" onclick="selectRegionCountry('🇲🇽','Mexico','MXN','English')">
+                    <span class="flag">🇲🇽</span>
+                    <div><div class="name">Mexico</div><div class="meta">MXN | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="mexico" onclick="selectRegionCountry('🇲🇽','Mexico','MXN','Español')">
+                    <span class="flag">🇲🇽</span>
+                    <div><div class="name">Mexico</div><div class="meta">MXN | Español</div></div>
+                </div>
+                <div class="region-country-card" data-name="united states" onclick="selectRegionCountry('🇺🇸','United States','USD','English')">
+                    <span class="flag">🇺🇸</span>
+                    <div><div class="name">United States</div><div class="meta">USD | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="united states" onclick="selectRegionCountry('🇺🇸','United States','USD','Español')">
+                    <span class="flag">🇺🇸</span>
+                    <div><div class="name">United States</div><div class="meta">USD | Español</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="region-section">
+            <div class="region-section-title">EUROPE</div>
+            <div class="region-grid">
+                <div class="region-country-card" data-name="austria" onclick="selectRegionCountry('🇦🇹','Austria','EUR','English')">
+                    <span class="flag">🇦🇹</span>
+                    <div><div class="name">Austria</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="belgium" onclick="selectRegionCountry('🇧🇪','Belgium','EUR','English')">
+                    <span class="flag">🇧🇪</span>
+                    <div><div class="name">Belgium</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="denmark" onclick="selectRegionCountry('🇩🇰','Denmark','EUR','English')">
+                    <span class="flag">🇩🇰</span>
+                    <div><div class="name">Denmark</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="france" onclick="selectRegionCountry('🇫🇷','France','EUR','English')">
+                    <span class="flag">🇫🇷</span>
+                    <div><div class="name">France</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="finland" onclick="selectRegionCountry('🇫🇮','Finland','EUR','English')">
+                    <span class="flag">🇫🇮</span>
+                    <div><div class="name">Finland</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="greece" onclick="selectRegionCountry('🇬🇷','Greece','EUR','English')">
+                    <span class="flag">🇬🇷</span>
+                    <div><div class="name">Greece</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="czech republic" onclick="selectRegionCountry('🇨🇿','Czech Republic','EUR','English')">
+                    <span class="flag">🇨🇿</span>
+                    <div><div class="name">Czech Republic</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="romania" onclick="selectRegionCountry('🇷🇴','Romania','EUR','English')">
+                    <span class="flag">🇷🇴</span>
+                    <div><div class="name">Romania</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="latvia" onclick="selectRegionCountry('🇱🇻','Latvia','EUR','English')">
+                    <span class="flag">🇱🇻</span>
+                    <div><div class="name">Latvia</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="lithuania" onclick="selectRegionCountry('🇱🇹','Lithuania','EUR','English')">
+                    <span class="flag">🇱🇹</span>
+                    <div><div class="name">Lithuania</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="luxembourg" onclick="selectRegionCountry('🇱🇺','Luxembourg','EUR','English')">
+                    <span class="flag">🇱🇺</span>
+                    <div><div class="name">Luxembourg</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="poland" onclick="selectRegionCountry('🇵🇱','Poland','EUR','English')">
+                    <span class="flag">🇵🇱</span>
+                    <div><div class="name">Poland</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="sweden" onclick="selectRegionCountry('🇸🇪','Sweden','EUR','English')">
+                    <span class="flag">🇸🇪</span>
+                    <div><div class="name">Sweden</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="switzerland" onclick="selectRegionCountry('🇨🇭','Switzerland','EUR','English')">
+                    <span class="flag">🇨🇭</span>
+                    <div><div class="name">Switzerland</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="netherlands" onclick="selectRegionCountry('🇳🇱','Netherlands','EUR','English')">
+                    <span class="flag">🇳🇱</span>
+                    <div><div class="name">Netherlands</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="slovakia" onclick="selectRegionCountry('🇸🇰','Slovakia','EUR','English')">
+                    <span class="flag">🇸🇰</span>
+                    <div><div class="name">Slovakia</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="bulgaria" onclick="selectRegionCountry('🇧🇬','Bulgaria','EUR','English')">
+                    <span class="flag">🇧🇬</span>
+                    <div><div class="name">Bulgaria</div><div class="meta">EUR | English</div></div>
+                </div>
+                <div class="region-country-card" data-name="serbia" onclick="selectRegionCountry('🇷🇸','Serbia','EUR','English')">
+                    <span class="flag">🇷🇸</span>
+                    <div><div class="name">Serbia</div><div class="meta">EUR | English</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="region-official-section">
+            <div class="region-official-title">&#9989; OFFICIAL REGIONAL STORES</div>
+            <a class="region-official-link" href="#">
+                <span class="url">&#127465;&#127466; de.wayofwade.com</span>
+                <span class="lang">Deutsch</span>
+            </a>
+            <a class="region-official-link" href="#">
+                <span class="url">&#127466;&#127480; es.wayofwade.com</span>
+                <span class="lang">Español</span>
+            </a>
+            <a class="region-official-link" href="#">
+                <span class="url">&#127471;&#127477; jp.wayofwade.com</span>
+                <span class="lang">日本語</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="search-overlay" id="searchOverlay">
+    <div class="search-bar-row">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="searchInput" placeholder="Хайх">
+        <span class="close-icon" onclick="closeSearch()">&#10005;</span>
+    </div>
+
+    <div class="search-body">
+        <div class="trending-col">
+            <h3>ТРЕНД ХАЙЛТУУД</h3>
+            <div class="trending-list">
+                <a href="#">пүүз</a>
+                <a href="#">hoodie</a>
+                <a href="#">даашинз</a>
+                <a href="#">жинсэн өмд</a>
+                <a href="#">хүрэм</a>
+                <a href="#">футболка</a>
+            </div>
+        </div>
+
+        <div class="suggested-col">
+            <h3>ТАНД ЗОРИУЛСАН САНАЛ</h3>
+            <div class="suggested-grid">
+                <div class="s-card" onclick="location.href='product.html'">
+                    <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80">
+                    <div class="s-title">SKY ELITE FF 4 ВОЛЕЙБОЛЫН ПҮҮЗ</div>
+                    <div class="s-price">220,000₮</div>
+                </div>
+                <div class="s-card" onclick="location.href='product.html'">
+                    <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=400&q=80">
+                    <div class="s-title">ХАР HOODIE</div>
+                    <div class="s-price">120,000₮</div>
+                </div>
+                <div class="s-card" onclick="location.href='product.html'">
+                    <img src="https://images.unsplash.com/photo-1465479423260-c4afc24172c6?auto=format&fit=crop&w=400&q=80">
+                    <div class="s-title">ЭМЭГТЭЙ ХҮРЭМ</div>
+                    <div class="s-price">180,000₮</div>
+                </div>
+                <div class="s-card" onclick="location.href='product.html'">
+                    <img src="https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=400&q=80">
+                    <div class="s-title">ДААШИНЗ</div>
+                    <div class="s-price">165,000₮</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="promo-bar">
+    <span class="arrow left">&#8249;</span>
+    Хямдралтай шинэ бараа хүлээж байна. <a href="#">Дэлгүүр хэсэх</a>
+    <span class="arrow right">&#8250;</span>
+</div>
+
+<div class="utility-row">
+    <a href="#">Дэлгүүрийн байршил</a>
+    <a href="#">Гишүүнчлэл</a>
+    <a href="#">Найзаа урих</a>
+    <a href="#">Мэдээлэл авах</a>
+
+    <div class="region-selector" id="finderSelector">
+        <div class="region-toggle" onclick="toggleFinder()">
+            <span class="flag">&#128205;</span>
+            <span class="chevron">&#9662;</span>
+        </div>
+        <div class="region-dropdown finder-dropdown">
+            <a href="store-locator.html">Дэлгүүр хайх</a>
+            <a href="store-locator.html">Эвент хайх</a>
+        </div>
+    </div>
+
+    <div class="region-selector" id="regionSelector">
+        <div class="region-toggle" onclick="openRegionModal()">
+            <span class="flag" id="currentFlag">🇲🇳</span>
+            <span class="chevron">&#9662;</span>
+        </div>
+    </div>
+</div>
+
+<nav class="main-nav">
+    <a href="index.html" class="logo">Fashion Shop</a>
+
+    <ul class="nav-links">
+        <li><a href="#">Shop</a></li>
+        <li><a href="#">New</a></li>
+        <li><a href="#">Sale</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+
+    <div class="nav-icons">
+        <span onclick="openSearch()">&#128269;</span>
+        <span onclick="openLogin()">&#128100;</span>
+        <span onclick="location.href='cart.html'">
+            &#128722;
+            <span class="cart-count" id="cart">0</span>
+        </span>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Шинэ загварын хувцас</h1>
+    <p>Өөрийн стилийг сонгоорой.</p>
+</section>
+
+<a class="wow-banner" href="#" onclick="return false;">
+    <img src="way-of-wade-banner.png" alt="Li-Ning Way of Wade — Make Your Own Way">
+</a>
+
+<div class="container">
+
+<div class="list-header">
+    <div>
+        <h1>Манай бүтээгдэхүүнүүд</h1>
+        <div class="breadcrumb">
+            <a href="index.html">Нүүр</a> &nbsp;•&nbsp; Манай бүтээгдэхүүнүүд
+        </div>
+    </div>
+</div>
+
+<div class="list-toolbar">
+    <span class="count"><span id="product-count">8</span> Бүтээгдэхүүн</span>
+
+    <label class="pill">
+        Харуулах:
+        <select id="showCount" onchange="applyShowCount()">
+            <option value="12">12</option>
+            <option value="24">24</option>
+            <option value="all" selected>Бүгд</option>
+        </select>
+    </label>
+
+    <div class="pill" id="showFiltersBtn" onclick="toggleFiltersSidebar()">
+        &#9660;&#9650; Шүүлтүүр харуулах
+    </div>
+
+    <label class="pill">
+        Эрэмбэлэх:
+        <select id="sortBy" onchange="sortProducts()">
+            <option value="default">Алфавитаар: А-Я</option>
+            <option value="price-asc">Үнэ: багаас их</option>
+            <option value="price-desc">Үнэ: ихээс бага</option>
+        </select>
+    </label>
+
+    <div class="view-switcher">
+        <div class="view-btn list" onclick="setColumns(1,this)" title="Жагсаалт">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <div class="view-btn" onclick="setColumns(2,this)" title="2 багана">
+            <div class="bar"></div><div class="bar"></div>
+        </div>
+        <div class="view-btn" onclick="setColumns(3,this)" title="3 багана">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <div class="view-btn active" onclick="setColumns(4,this)" title="4 багана">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+    </div>
+</div>
+
+<div class="main-layout">
+
+<aside class="filters" id="filtersSidebar">
+
+    <div class="filters-title">&#9881;&#65039; Шүүлтүүр</div>
+
+    <div class="filter-group">
+        <div class="filter-toggle" onclick="toggleFilter(this)">
+            <span>Хэмжээ</span><span class="icon">+</span>
+        </div>
+        <div class="filter-options">
+            <label><input type="checkbox"> S</label>
+            <label><input type="checkbox"> M</label>
+            <label><input type="checkbox"> L</label>
+            <label><input type="checkbox"> XL</label>
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <div class="filter-toggle" onclick="toggleFilter(this)">
+            <span>Хүйс</span><span class="icon">+</span>
+        </div>
+        <div class="filter-options">
+            <label><input type="checkbox"> Эрэгтэй</label>
+            <label><input type="checkbox"> Эмэгтэй</label>
+            <label><input type="checkbox"> Хүүхэд</label>
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <div class="filter-toggle" onclick="toggleFilter(this)">
+            <span>Ангилал</span><span class="icon">+</span>
+        </div>
+        <div class="filter-options">
+            <label><input type="checkbox"> Футболка</label>
+            <label><input type="checkbox"> Hoodie</label>
+            <label><input type="checkbox"> Хүрэм</label>
+            <label><input type="checkbox"> Даашинз</label>
+            <label><input type="checkbox"> Өмд</label>
+            <label><input type="checkbox"> Пүүз</label>
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <div class="filter-toggle" onclick="toggleFilter(this)">
+            <span>Өнгө</span><span class="icon">+</span>
+        </div>
+        <div class="filter-options">
+            <label><input type="checkbox"> Хар</label>
+            <label><input type="checkbox"> Цагаан</label>
+            <label><input type="checkbox"> Цэнхэр</label>
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <div class="filter-toggle" onclick="toggleFilter(this)">
+            <span>Үнэ</span><span class="icon">+</span>
+        </div>
+        <div class="filter-options">
+            <label><input type="checkbox"> 100,000₮ хүртэл</label>
+            <label><input type="checkbox"> 100,000 - 200,000₮</label>
+            <label><input type="checkbox"> 200,000₮ дээш</label>
+        </div>
+    </div>
+</aside>
+
+<div class="products-col">
+
+<div class="products" id="productGrid">
+
+<div class="card" onclick="location.href='product.html'">
+<img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=600&q=80">
+<div class="info">
+<h3>LiNing Way of Wade 12 LUX “Announcement” – LiNing Way of Wade Sneakers</h3>
+<div class="price">550,000₮</div>
+<button onclick="addCart(event,this)">Сагсанд хийх</button>
+</div>
+</div>
+
+<div class="card" onclick="location.href='product.html'">
+<img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80">
+<div class="info">
+<h3>ASICS SKY ELITE FF TOKYO - Men's volleyball shoes</h3>
+<div class="price">450,000₮</div>
+<button onclick="addCart(event,this)">Сагсанд хийх</button>
+</div>
+</div>
+
+<div class="card" onclick="location.href='product.html'">
+<img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=600&q=80">
+<div class="info">
+<h3>Mizuno WAVE MOMENTUM 2 MID - Men's volleyball shoes</h3>
+<div class="price"> 475,000 ₮ </div>
+<button onclick="addCart(event,this)">Сагсанд хийх</button>
+</div>
+</div>
+
+<div class="card" onclick="location.href='product.html'">
+<img src="https://images.unsplash.com/photo-1584735175315-9d5df23860e6?auto=format&fit=crop&w=600&q=80">
+<div class="info">
+<h3>Dlo 1 "Thorn"</h3>
+<div class="price">650,000₮</div>
+<button onclick="addCart(event,this)">Сагсанд хийх</button>
+</div>
+</div>
+
+<div class="card" onclick="location.href='product.html'">
+<img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80">
+<div class="info">
+<h3>WAVE LIGHTNING Z8 MID</h3>
+<div class="price">575,000₮</div>
+<button onclick="addCart(event,this)">Сагсанд хийх</button>
+</div>
+</div>
+
+<div class="card" onclick="location.href='product.html'">
+<img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=600&q=80">
+<div class="info">
+<h3>Li-Ning Way of Wade All City 12 Colorways - 6 Styles</h3>
+<div class="price">500,000₮</div>
+<button onclick="addCart(event,this)">Сагсанд хийх</button>
+</div>
+</div>
+
+<div class="card" onclick="location.href='product.html'">
+<img src="https://images.unsplash.com/photo-1600269452121-4f2416e55c28?auto=format&fit=crop&w=600&q=80">
+<div class="info">
+<h3>Asics Skye Elite FF MT 3 Paris Womens Yellow Volleyball Shoes</h3>
+<div class="price">590,000₮</div>
+<button onclick="addCart(event,this)">Сагсанд хийх</button>
+</div>
+</div>
+
+<div class="card" onclick="location.href='product.html'">
+<img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=80">
+<div class="info">
+<h3>Volleyball Shoes for Women at PassaVolleyball</h3>
+<div class="price">670,000₮</div>
+<button onclick="addCart(event,this)">Сагсанд хийх</button>
+</div>
+</div>
+
+</div>
+
+<div class="load-more-wrap">
+    <div class="showing-text"><span id="showingCount">8</span>-с <span id="totalCount">8</span> харуулж байна</div>
+    <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:100%"></div>
+    </div>
+    <button class="load-more-btn" id="loadMoreBtn" disabled>Бүгд харагдлаа</button>
+</div>
+
+<div class="seo-blurb">
+    <p>Fashion Shop-оос хамгийн сүүлийн үеийн хувцас, гутлыг сонго...</p>
+    <div class="extra" id="seoExtra">
+        Бид эрэгтэй, эмэгтэй, хүүхдийн загварын хувцас, пүүз, хүрэм, даашинз зэргийг өргөн сонголттойгоор санал болгож байна.
+        Манай онлайн дэлгүүрээс хямдралтай үнээр чанартай бүтээгдэхүүн захиалж, хотын дурын цэгт хүргэлтээр аваарай.
+    </div>
+    <div class="view-more-toggle" id="viewMoreToggle" onclick="toggleSeoBlurb()">
+        <span id="viewMoreLabel">Дэлгэрэнгүй</span>
+        <span class="chevron">&#9662;</span>
+    </div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<section class="wade-team-banner">
+    <div class="wtb-inner">
+        <h2>BECOME A WADE TEAM MEMBER</h2>
+        <div class="wtb-sub">Get great discounts and special benefits</div>
+        <button class="wtb-join-btn" onclick="openLogin(); switchLoginTab('new');">JOIN NOW</button>
+        <div class="wtb-terms">Terms and Conditions Apply.</div>
+    </div>
+</section>
+
+<footer>
+© 2026 Fashion Shop | Бүх эрх хуулиар хамгаалагдсан.
+</footer>
+<footer class="site-footer">
+  <div class="footer-col">
+    <h3>ABOUT US</h3>
+    <a href="#">Mizuno Corporation</a>
+    <a href="#">Mizuno History</a>
+    <a href="#">Sustainability</a>
+    <a href="#">Careers</a>
+    <a href="#">Blog</a>
+    <a href="#">Mizuno Movement</a>
+  </div>
+
+  <div class="footer-col">
+    <h3>SUPPORT</h3>
+    <a href="#">Contact Us</a>
+    <a href="#">Returns & Refunds</a>
+    <a href="#">Product Registrations</a>
+    <a href="#">Limited Warranty</a>
+    <a href="#">Direct Connect - B2B</a>
+    <a href="#">FAQs</a>
+  </div>
+
+  <div class="footer-col">
+    <h3>SHOPPING</h3>
+    <a href="#">MVP Rewards</a>
+    <a href="#">Wishlist</a>
+    <a href="#">Find a Dealer</a>
+    <a href="#">Team Sales</a>
+    <a href="#">Mizuno Experience Center</a>
+    <a href="#">Trade-Up Program</a>
+    <a href="#">Gift Cards</a>
+  </div>
+</footer>
+
+<div class="bottom-bar">
+    <div class="copyright">Copyright © 2026 <a href="#">Fashion Shop LLC,</a> Бүх эрх хуулиар хамгаалагдсан.</div>
+    <div class="payment-badges">
+        <span class="badge" style="background:#1a1f71;color:white;">VISA</span>
+        <span class="badge" style="background:#006fcf;color:white;">AMEX</span>
+        <span class="badge">DISCOVER</span>
+        <span class="badge">&#63743; Pay</span>
+        <span class="badge">G Pay</span>
+        <span class="badge">JCB</span>
+        <span class="badge">Mastercard</span>
+        <span class="badge" style="background:#003087;color:white;">PayPal</span>
+        <span class="badge" style="background:#5a31f4;color:white;">shop</span>
+    </div>
+</div>
+
+<div class="bottom-row2">
+    <button class="a11y-btn" title="Хандалт" onclick="openA11yPanel()">&#9855;</button>
+    <button class="help-btn" onclick="alert('Тусламжийн цонх удахгүй бэлэн болно.')">&#10067; Тусламж</button>
+</div>
+
+<script>
+
+function openRegionModal(){
+    document.getElementById("regionModalBackdrop").classList.add("open");
+}
+
+function closeRegionModal(){
+    document.getElementById("regionModalBackdrop").classList.remove("open");
+}
+
+function closeRegionModalOnBackdrop(e){
+    if(e.target.id === "regionModalBackdrop") closeRegionModal();
+}
+
+function selectRegionCountry(flag, name, currency, lang){
+    document.getElementById("currentFlag").innerHTML = flag;
+    closeRegionModal();
+}
+
+function filterRegionCountries(){
+    const q = document.getElementById("regionSearchInput").value.trim().toLowerCase();
+    document.querySelectorAll(".region-country-card").forEach(card => {
+        const match = card.getAttribute("data-name").indexOf(q) !== -1;
+        card.classList.toggle("hidden", q.length > 0 && !match);
+    });
+    document.querySelectorAll(".region-section").forEach(section => {
+        const anyVisible = Array.from(section.querySelectorAll(".region-country-card"))
+            .some(c => !c.classList.contains("hidden"));
+        section.style.display = anyVisible ? "" : "none";
+    });
+}
+
+function toggleFinder(){
+    document.getElementById("finderSelector").classList.toggle("open");
+}
+
+document.addEventListener("click", function(e){
+    const sel = document.getElementById("regionSelector");
+    const finder = document.getElementById("finderSelector");
+    if(sel && !sel.contains(e.target)){
+        sel.classList.remove("open");
+    }
+    if(finder && !finder.contains(e.target)){
+        finder.classList.remove("open");
+    }
+});
+
+const prizes = [
+    {label:"10,000₮", angle:30},
+    {label:"30,000₮", angle:90},
+    {label:"5,000₮", angle:150},
+    {label:"15,000₮", angle:210},
+    {label:"7,000₮", angle:270},
+    {label:"20,000₮", angle:330}
+];
+
+let spinning = false;
+
+function openSpin(){
+    document.getElementById("spinBackdrop").classList.add("open");
+    document.getElementById("giftTabWrap").classList.remove("show");
+}
+
+function closeSpin(){
+    document.getElementById("spinBackdrop").classList.remove("open");
+    document.getElementById("giftTabWrap").classList.add("show");
+}
+
+function dismissGiftTab(e){
+    e.stopPropagation();
+    document.getElementById("giftTabWrap").classList.remove("show");
+}
+
+function spinWheel(){
+    if(spinning) return;
+
+    const email = document.getElementById("spinEmail").value;
+    if(!email){
+        alert("Имэйл хаягаа оруулна уу.");
+        return;
+    }
+
+    spinning = true;
+    document.getElementById("spinBtn").disabled = true;
+
+    const prize = prizes[Math.floor(Math.random() * prizes.length)];
+    const extraSpins = 5 * 360;
+    const finalRotation = extraSpins + (360 - prize.angle);
+
+    const wheel = document.getElementById("wheel");
+    wheel.style.transform = "rotate(" + finalRotation + "deg)";
+
+    setTimeout(() => {
+        const resultEl = document.getElementById("spinResult");
+        resultEl.innerHTML = "Баяр хүргэе! Та " + prize.label + " хямдралын эрх авлаа &#127881;";
+        resultEl.style.display = "block";
+        document.getElementById("spinBtn").innerText = "Хямдралаа ашиглах";
+        document.getElementById("spinBtn").disabled = false;
+        spinning = false;
+    }, 4200);
+}
+
+setTimeout(openSpin, 1500);
+
+/* ===== Accessibility panel logic ===== */
+const a11yState = {
+    textSize:0, contrast:0, saturation:0, letterSpacing:0, lineSpacing:0,
+    highlightLinks:false, readableFont:false, align:0, hideImages:false,
+    stopAnim:false, bwCursor:false, readerView:false, readingGuide:false, tts:false
+};
+
+function openA11yPanel(){
+    document.getElementById("a11yPanel").classList.add("open");
+}
+
+function closeA11yPanel(){
+    document.getElementById("a11yPanel").classList.remove("open");
+}
+
+document.addEventListener("keydown", function(e){
+    if(e.ctrlKey && (e.key === "x" || e.key === "X")){
+        e.preventDefault();
+        document.getElementById("a11yPanel").classList.toggle("open");
+    }
+});
+
+function setWidgetSize(size){
+    document.getElementById("widgetSizeNormal").classList.toggle("active", size === "normal");
+    document.getElementById("widgetSizeLarge").classList.toggle("active", size === "large");
+    document.getElementById("a11yPanel").style.maxWidth = size === "large" ? "480px" : "400px";
+    document.querySelectorAll(".a11y-body").forEach(b => b.style.fontSize = size === "large" ? "17px" : "15px");
+}
+
+function setWidgetPosition(pos){
+    document.getElementById("widgetPosLeft").classList.toggle("active", pos === "left");
+    document.getElementById("widgetPosRight").classList.toggle("active", pos === "right");
+    document.getElementById("a11yPanel").classList.toggle("right-side", pos === "right");
+}
+
+function updateDots(id, level, max){
+    const dots = document.querySelectorAll("#" + id + " span");
+    dots.forEach((d,i) => d.classList.toggle("filled", i < level));
+}
+
+function setHtmlClass(prefix, value){
+    document.documentElement.classList.forEach(c => {
+        if(c.indexOf(prefix) === 0) document.documentElement.classList.remove(c);
+    });
+    if(value) document.documentElement.classList.add(value);
+}
+
+function cycleTextSize(){
+    a11yState.textSize = (a11yState.textSize + 1) % 4;
+    const map = ["", "a11y-large-text", "a11y-larger-text", "a11y-largest-text"];
+    setHtmlClass("a11y-large", null);
+    setHtmlClass("a11y-larger", null);
+    setHtmlClass("a11y-largest", null);
+    if(map[a11yState.textSize]) document.documentElement.classList.add(map[a11yState.textSize]);
+    updateDots("dotsTextSize", a11yState.textSize, 3);
+    document.getElementById("cardTextSize").classList.toggle("active", a11yState.textSize > 0);
+}
+
+function cycleContrast(){
+    a11yState.contrast = (a11yState.contrast + 1) % 3;
+    setHtmlClass("a11y-contrast", a11yState.contrast ? "a11y-contrast-" + a11yState.contrast : null);
+    updateDots("dotsContrast", a11yState.contrast, 2);
+    document.getElementById("cardContrast").classList.toggle("active", a11yState.contrast > 0);
+}
+
+function cycleSaturation(){
+    a11yState.saturation = (a11yState.saturation + 1) % 4;
+    const map = ["", "a11y-sat-low", "a11y-sat-gray", "a11y-sat-high"];
+    setHtmlClass("a11y-sat", map[a11yState.saturation] || null);
+    updateDots("dotsSaturation", a11yState.saturation, 3);
+    document.getElementById("cardSaturation").classList.toggle("active", a11yState.saturation > 0);
+}
+
+function toggleHighlightLinks(){
+    a11yState.highlightLinks = !a11yState.highlightLinks;
+    document.documentElement.classList.toggle("a11y-highlight-links", a11yState.highlightLinks);
+    document.getElementById("cardHighlight").classList.toggle("active", a11yState.highlightLinks);
+}
+
+function cycleLetterSpacing(){
+    a11yState.letterSpacing = (a11yState.letterSpacing + 1) % 4;
+    const map = ["", "a11y-ls-1", "a11y-ls-2", "a11y-ls-3"];
+    setHtmlClass("a11y-ls", map[a11yState.letterSpacing] || null);
+    updateDots("dotsLetterSpacing", a11yState.letterSpacing, 3);
+    document.getElementById("cardLetterSpacing").classList.toggle("active", a11yState.letterSpacing > 0);
+}
+
+function cycleLineSpacing(){
+    a11yState.lineSpacing = (a11yState.lineSpacing + 1) % 4;
+    const map = ["", "a11y-line-1", "a11y-line-2", "a11y-line-3"];
+    setHtmlClass("a11y-line", map[a11yState.lineSpacing] || null);
+    updateDots("dotsLineSpacing", a11yState.lineSpacing, 3);
+    document.getElementById("cardLineSpacing").classList.toggle("active", a11yState.lineSpacing > 0);
+}
+
+function toggleReadableFont(){
+    a11yState.readableFont = !a11yState.readableFont;
+    document.documentElement.classList.toggle("a11y-readable-font", a11yState.readableFont);
+    document.getElementById("cardReadableFont").classList.toggle("active", a11yState.readableFont);
+}
+
+function cycleAlign(){
+    a11yState.align = (a11yState.align + 1) % 3;
+    const map = ["", "a11y-align-left", "a11y-align-center"];
+    setHtmlClass("a11y-align", map[a11yState.align] || null);
+    document.getElementById("cardAlign").classList.toggle("active", a11yState.align > 0);
+}
+
+function toggleHideImages(){
+    a11yState.hideImages = !a11yState.hideImages;
+    document.documentElement.classList.toggle("a11y-hide-images", a11yState.hideImages);
+    document.getElementById("cardHideImages").classList.toggle("active", a11yState.hideImages);
+}
+
+function toggleStopAnim(){
+    a11yState.stopAnim = !a11yState.stopAnim;
+    document.documentElement.classList.toggle("a11y-stop-anim", a11yState.stopAnim);
+    document.getElementById("cardStopAnim").classList.toggle("active", a11yState.stopAnim);
+}
+
+function toggleBwCursor(){
+    a11yState.bwCursor = !a11yState.bwCursor;
+    document.documentElement.classList.toggle("a11y-bw-cursor", a11yState.bwCursor);
+    document.getElementById("cardBwCursor").classList.toggle("active", a11yState.bwCursor);
+}
+
+function toggleReaderView(){
+    a11yState.readerView = !a11yState.readerView;
+    document.documentElement.classList.toggle("a11y-reader-view", a11yState.readerView);
+    document.getElementById("cardReaderView").classList.toggle("active", a11yState.readerView);
+}
+
+function toggleReadingGuide(){
+    a11yState.readingGuide = !a11yState.readingGuide;
+    const bar = document.getElementById("readingGuideBar");
+    bar.classList.toggle("active", a11yState.readingGuide);
+    document.getElementById("cardReadingGuide").classList.toggle("active", a11yState.readingGuide);
+}
+
+document.addEventListener("mousemove", function(e){
+    if(a11yState.readingGuide){
+        document.getElementById("readingGuideBar").style.top = (e.clientY - 18) + "px";
+    }
+});
+
+function toggleTextToSpeech(){
+    a11yState.tts = !a11yState.tts;
+    document.getElementById("cardTTS").classList.toggle("active", a11yState.tts);
+    if(a11yState.tts && "speechSynthesis" in window){
+        const text = document.querySelector(".hero p") ?
+            document.querySelector(".hero h1").innerText + ". " + document.querySelector(".hero p").innerText :
+            document.body.innerText.slice(0, 400);
+        const utter = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utter);
+    } else {
+        window.speechSynthesis.cancel();
+    }
+}
+
+function applyPreset(name){
+    document.querySelectorAll(".a11y-card[data-preset]").forEach(c => c.classList.remove("active"));
+    document.querySelector('[data-preset="' + name + '"]').classList.add("active");
+
+    resetA11y(true);
+
+    if(name === "motor"){
+        cycleTextSize(); cycleTextSize();
+        toggleHighlightLinks();
+    } else if(name === "color"){
+        cycleSaturation(); cycleSaturation();
+    } else if(name === "vision"){
+        cycleTextSize(); cycleTextSize(); cycleTextSize();
+        cycleContrast();
+    } else if(name === "cognitive"){
+        toggleReaderView();
+        toggleStopAnim();
+    } else if(name === "epileptic"){
+        toggleStopAnim();
+    } else if(name === "adhd"){
+        toggleReaderView();
+        cycleLineSpacing(); cycleLineSpacing();
+    }
+
+    document.querySelector('[data-preset="' + name + '"]').classList.add("active");
+}
+
+function resetA11y(skipPresetClear){
+    document.documentElement.className = "";
+    a11yState.textSize = 0; a11yState.contrast = 0; a11yState.saturation = 0;
+    a11yState.letterSpacing = 0; a11yState.lineSpacing = 0; a11yState.highlightLinks = false;
+    a11yState.readableFont = false; a11yState.align = 0; a11yState.hideImages = false;
+    a11yState.stopAnim = false; a11yState.bwCursor = false; a11yState.readerView = false;
+    a11yState.readingGuide = false; a11yState.tts = false;
+
+    document.querySelectorAll(".a11y-card").forEach(c => c.classList.remove("active"));
+    document.querySelectorAll(".a11y-dots span").forEach(d => d.classList.remove("filled"));
+    document.getElementById("readingGuideBar").classList.remove("active");
+    window.speechSynthesis.cancel();
+
+    if(!skipPresetClear){
+        document.querySelectorAll(".a11y-card[data-preset]").forEach(c => c.classList.remove("active"));
+    }
+}
+
+function openLogin(){
+    document.getElementById("loginBackdrop").classList.add("open");
+}
+
+function closeLogin(){
+    document.getElementById("loginBackdrop").classList.remove("open");
+}
+
+function closeLoginOnBackdrop(e){
+    if(e.target.id === "loginBackdrop") closeLogin();
+}
+
+function switchLoginTab(which){
+    const loginTab = document.getElementById("loginTab");
+    const newTab = document.getElementById("newShopperTab");
+    const loginBody = document.getElementById("loginBody");
+    const newBody = document.getElementById("newShopperBody");
+
+    if(which === "login"){
+        loginTab.classList.add("active");
+        newTab.classList.remove("active");
+        loginBody.style.display = "block";
+        newBody.style.display = "none";
+    } else {
+        newTab.classList.add("active");
+        loginTab.classList.remove("active");
+        loginBody.style.display = "none";
+        newBody.style.display = "block";
+    }
+}
+
+function submitLogin(){
+    const email = document.getElementById("loginEmail").value;
+    if(!email){
+        alert("Имэйл хаягаа оруулна уу.");
+        return;
+    }
+    alert("Нэвтэрч байна: " + email);
+}
+
+function submitNewShopper(){
+    const email = document.getElementById("newEmail").value;
+    if(!email){
+        alert("Имэйл хаягаа оруулна уу.");
+        return;
+    }
+    alert("Бүртгэл эхлүүлж байна: " + email);
+}
+
+function openSearch(){
+    document.getElementById("searchOverlay").classList.add("open");
+    document.getElementById("searchInput").focus();
+}
+
+function closeSearch(){
+    document.getElementById("searchOverlay").classList.remove("open");
+}
+
+function toggleSeoBlurb(){
+    const extra = document.getElementById("seoExtra");
+    const toggle = document.getElementById("viewMoreToggle");
+    const label = document.getElementById("viewMoreLabel");
+    extra.classList.toggle("open");
+    toggle.classList.toggle("open");
+    label.innerText = extra.classList.contains("open") ? "Хураах" : "Дэлгэрэнгүй";
+}
+
+function setColumns(n, btn){
+    const grid = document.getElementById("productGrid");
+    document.querySelectorAll(".view-switcher .view-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    if(n === 1){
+        grid.style.gridTemplateColumns = "1fr";
+    } else {
+        grid.style.gridTemplateColumns = "repeat(" + n + ", 1fr)";
+    }
+}
+
+function toggleFiltersSidebar(){
+    const sidebar = document.getElementById("filtersSidebar");
+    const btn = document.getElementById("showFiltersBtn");
+    sidebar.classList.toggle("hidden");
+    btn.classList.toggle("active");
+}
+
+function applyShowCount(){
+    const val = document.getElementById("showCount").value;
+    const cards = document.querySelectorAll("#productGrid .card");
+    cards.forEach((card, i) => {
+        if(val === "all"){
+            card.style.display = "";
+        } else {
+            card.style.display = i < parseInt(val) ? "" : "none";
+        }
+    });
+}
+
+function toggleFilter(el){
+    el.parentElement.classList.toggle("open");
+}
+
+document.getElementById("product-count").innerHTML =
+    document.querySelectorAll("#productGrid .card").length;
+
+function sortProducts(){
+    const grid = document.getElementById("productGrid");
+    const cards = Array.from(grid.querySelectorAll(".card"));
+    const order = document.getElementById("sortBy").value;
+
+    const getPrice = card =>
+        parseInt(card.querySelector(".price").innerText.replace(/[^0-9]/g,""));
+
+    if(order === "price-asc"){
+        cards.sort((a,b) => getPrice(a) - getPrice(b));
+    } else if(order === "price-desc"){
+        cards.sort((a,b) => getPrice(b) - getPrice(a));
+    }
+
+    cards.forEach(card => grid.appendChild(card));
+}
+
+function getCart(){
+    try{
+        return JSON.parse(localStorage.getItem("fashionShopCart")) || [];
+    } catch(e){
+        return [];
+    }
+}
+
+function saveCart(cart){
+    localStorage.setItem("fashionShopCart", JSON.stringify(cart));
+}
+
+function updateCartCount(){
+    const cart = getCart();
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    const el = document.getElementById("cart");
+    if(el) el.innerHTML = count;
+}
+
+function addCart(e, btn){
+    if(e) e.stopPropagation();
+
+    const card = btn.closest(".card");
+    const name = card.querySelector("h3").innerText;
+    const price = parseInt(card.querySelector(".price").innerText.replace(/[^0-9]/g,""));
+    const img = card.querySelector("img").getAttribute("src");
+
+    const cart = getCart();
+    const existing = cart.find(item => item.name === name);
+    if(existing){
+        existing.qty++;
+    } else {
+        cart.push({name, price, img, qty:1});
+    }
+    saveCart(cart);
+    updateCartCount();
+
+    alert("Бүтээгдэхүүн сагсанд нэмэгдлээ.");
+}
+
+updateCartCount();
+</script>
+
+</body>
+</html>
